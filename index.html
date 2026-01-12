@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Quote App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <button id="createTab">Create Quote</button>
+    <button id="oldTab">Old Quotes</button>
+  </nav>
+
+  <main>
+    <!-- CREATE QUOTE -->
+    <section id="createSection" class="section active">
+      <button id="getQuoteBtn">Create New Quote</button>
+
+      <div id="quoteBox" class="quote-box hidden">
+        <p id="quoteText"></p>
+        <div class="actions">
+          <button id="saveBtn">Yadda saxla</button>
+          <button id="skipBtn">Ləğv et</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- OLD QUOTES -->
+    <section id="oldSection" class="section">
+      <ul id="quoteList"></ul>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
