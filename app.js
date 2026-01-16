@@ -1,82 +1,52 @@
-const createTab = document.getElementById("createTab");
-const oldTab = document.getElementById("oldTab");
 
-const createSection = document.getElementById("createSection");
-const oldSection = document.getElementById("oldSection");
+function fetchTodos() {
+  fetch("https://jsonplaceholder.typicode.com/todos")
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(todos) {
+      localStorage.setItem("todos", JSON.stringify(todos));
+      displayTodos();
+    })
+    .catch(function(error) {
+      console.error("Xəta baş verdi:", error);
+    });
+}
 
-const getQuoteBtn = document.getElementById("getQuoteBtn");
-const quoteBox = document.getElementById("quoteBox");
-const quoteText = document.getElementById("quoteText");
 
-const saveBtn = document.getElementById("saveBtn");
-const skipBtn = document.getElementById("skipBtn");
+function displayTodos() {
+  var todos = JSON.parse(localStorage.getItem("todos")) || [];
+  var tbody = document.querySelector("#todoTable tbody");
+  tbody.innerHTML = "";
 
-const quoteList = document.getElementById("quoteList");
+  todos.forEach(function(todo) {
+    var tr = document.createElement("tr");
 
-let currentQuote = "";
+   
+    if (todo.completed) {
+      tr.style.backgroundColor = "lightgreen";
+    } else {
+      tr.style.backgroundColor = "lightcoral";
+    }
 
-/* NAVBAR */
-createTab.onclick = () => {
-  createSection.classList.add("active");
-  oldSection.classList.remove("active");
-};
+    tr.innerHTML =
+      "<td>" + todo.id + "</td>" +
+      "<td>" + todo.title + "</td>" +
+      "<td>" + (todo.completed ? "Tamamlandı" : "Tamamlanmadı") + "</td>" +
+      "<td><button onclick='deleteTodo(" + todo.id + ")'>Sil</button></td>";
 
-oldTab.onclick = () => {
-  createSection.classList.remove("active");
-  oldSection.classList.add("active");
-  renderQuotes();
-};
-
-/* CREATE QUOTE — AXIOS */
-getQuoteBtn.onclick = async () => {
-  try {
-    const res = await axios.get("https://dummyjson.com/quotes/random");
-    currentQuote = res.data.content;
-    quoteText.textContent = currentQuote;
-    quoteBox.classList.remove("hidden");
-  } catch (err) {
-    quoteText.textContent = "Quote yüklənmədi 😔";
-    quoteBox.classList.remove("hidden");
-  }
-};
-
-/* SAVE TO LOCALSTORAGE */
-saveBtn.onclick = () => {
-  const quotes = JSON.parse(localStorage.getItem("quotes")) || [];
-  quotes.push(currentQuote);
-  localStorage.setItem("quotes", JSON.stringify(quotes));
-  quoteBox.classList.add("hidden");
-};
-
-/* SKIP */
-skipBtn.onclick = () => {
-  quoteBox.classList.add("hidden");
-};
-
-/* OLD QUOTES */
-function renderQuotes() {
-  quoteList.innerHTML = "";
-  const quotes = JSON.parse(localStorage.getItem("quotes")) || [];
-
-  if (quotes.length === 0) {
-    quoteList.innerHTML = "<li>Heç bir quote yoxdur 💙</li>";
-    return;
-  }
-
-  quotes.forEach((q, i) => {
-    const li = document.createElement("li");
-    li.textContent = q;
-
-    const btn = document.createElement("button");
-    btn.textContent = "Sil";
-    btn.onclick = () => {
-      quotes.splice(i, 1);
-      localStorage.setItem("quotes", JSON.stringify(quotes));
-      renderQuotes();
-    };
-
-    li.appendChild(btn);
-    quoteList.appendChild(li);
+    tbody.appendChild(tr);
   });
 }
 
+function deleteTodo(id) {
+  var todos = JSON.parse(localStorage.getItem("todos")) || [];
+  todos = todos.filter(function(todo) {
+    return todo.id !== id;
+  });
+  localStorage.setItem("todos", JSON.stringify(todos));
+  displayTodos();
+}
+
+
+fetchTodos();
